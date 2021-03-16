@@ -24,8 +24,6 @@
   "dependencies": {
     "console.table": "^0.10.0",
     "inquirer": "^8.0.0",
-    "mysql2": "^2.2.5",
-    "express": "^4.17.1",
-    "sqlite3": "^5.0.2"
+    "mysql2": "^2.2.5"
   }
 }

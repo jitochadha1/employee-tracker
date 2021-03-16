@@ -6,6 +6,12 @@ connection.query(`
     ('1'),
     ('2')
 `);
+connection.query(`
+  INSERT INTO department(name)
+  VALUES
+    ('1'),
+    ('2')
+`);
 
 /*INSERT INTO role (title, salary, department_id)
 VALUES

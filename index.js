@@ -1,21 +1,101 @@
-const express = require('express');
-const connection = require('./db/connect');
-const PORT = process.env.PORT || 3001;
-const app = express();
+const { showTable, insert, getEmployees } = require('./db/database');
+const inquirer = require('inquirer');
+const cTable = require('console.table');
 
-/*connection.query('SELECT * from department', function (err, results, fields) {
-    console.log(results);
-});*/
+const VIEW_DEPARTMENTS = 'view all departments';
+const VIEW_ROLES = 'view all roles';
+const VIEW_EMPLOYEES = 'view all employees';
+const ADD_DEPARTMENT = 'add a department';
+const ADD_ROLE = 'add a role';
+const ADD_EMPLOYEE = 'add an employee';
+const UPDATE_ROLE = 'update an employee role';
 
-// Express middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+const options = [{
+    name: 'action',
+    label: 'Select an action',
+    type: 'list',
+    choices: [
+        VIEW_DEPARTMENTS,
+        VIEW_ROLES,
+        VIEW_EMPLOYEES,
+        ADD_DEPARTMENT,
+        ADD_ROLE,
+        ADD_EMPLOYEE,
+        UPDATE_ROLE,
+    ]
+}];
 
-app.get('/', (req, res) => {
-    connection.query('SELECT * from department', function (err, results, fields) {
-        console.log(err, results, fields);
-        res.json(results);
-    });
-});
+async function run() {
+    const { action } = await inquirer.prompt(options);
 
-app.listen(PORT, () => console.log(`Listening to port ${PORT}`));
+    switch (action) {
+        case VIEW_DEPARTMENTS:
+            await showTable('department');
+            break;
+
+        case VIEW_ROLES:
+            await showTable('role');
+            break;
+
+        case VIEW_EMPLOYEES:
+            await showTable('employee');
+            break;
+
+        case ADD_DEPARTMENT:
+            const { name } = await inquirer.prompt([{ name: 'name', label: 'Department name' }]);
+            insert('department', { name })
+            break;
+
+        case ADD_ROLE:
+            const { title, salary, department_id } = await inquirer.prompt([{
+                name: 'title'
+            }, {
+                name: 'salary'
+            }, {
+                name: 'department_id'
+            }]);
+
+            insert('role', { title, salary, department_id })
+            break;
+
+        case ADD_EMPLOYEE:
+            const { first_name, last_name, role_id, manager_id } = await inquirer.prompt([{
+                name: 'first_name'
+            }, {
+                name: 'last_name'
+            }, {
+                name: 'role_id'
+            }, {
+                name: 'manager_id'
+            }]);
+
+            insert('employee', { first_name, last_name, role_id, manager_id })
+            break;
+
+        case UPDATE_ROLE:
+            const employees = await getEmployees();
+
+            console.log(employees)
+
+            const { employee } = await inquirer.prompt([{
+                name: 'employee',
+                label: 'Select employee',
+                type: 'list',
+                choices: employees.map(employee => ({
+                    value: employee.id,
+                    label: `${employee.first_name} ${employee.last_name}`,
+                }))
+            }]);
+
+            console.log(employee);
+
+            break;
+
+        default:
+            break;
+    }
+
+    run();
+}
+
+run();
