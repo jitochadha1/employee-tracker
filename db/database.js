@@ -1,4 +1,5 @@
 const connection = require('./connect');
+const cTable = require('console.table');
 
 const showTable = (table) => {
     return new Promise(resolve => {
@@ -34,8 +35,12 @@ const getEmployees = () => {
     );
 };
 
-const updateEmployeeRole = (employee, newRole) => {
+const updateEmployeeRole = (employeeId, newRole) => {
+    const query = `UPDATE employee SET role_id='${newRole}' WHERE id='${employeeId}'`;
 
+    return new Promise(resolve =>
+        connection.query(query, resolve)
+    );
 };
 
-module.exports = { showTable, insert, getEmployees };
+module.exports = { showTable, insert, getEmployees, updateEmployeeRole };

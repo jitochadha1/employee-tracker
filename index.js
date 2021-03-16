@@ -1,6 +1,5 @@
-const { showTable, insert, getEmployees } = require('./db/database');
+const { showTable, insert, getEmployees, updateEmployeeRole } = require('./db/database');
 const inquirer = require('inquirer');
-const cTable = require('console.table');
 
 const VIEW_DEPARTMENTS = 'view all departments';
 const VIEW_ROLES = 'view all roles';
@@ -60,7 +59,7 @@ async function run() {
 
         case ADD_EMPLOYEE:
             const { first_name, last_name, role_id, manager_id } = await inquirer.prompt([{
-                name: 'first_name'
+                name: 'first_name',
             }, {
                 name: 'last_name'
             }, {
@@ -75,20 +74,16 @@ async function run() {
         case UPDATE_ROLE:
             const employees = await getEmployees();
 
-            console.log(employees)
-
             const { employee } = await inquirer.prompt([{
                 name: 'employee',
                 label: 'Select employee',
                 type: 'list',
-                choices: employees.map(employee => ({
-                    value: employee.id,
-                    label: `${employee.first_name} ${employee.last_name}`,
-                }))
+                choices: employees.map(employee => `${employee.id} ${employee.first_name} ${employee.last_name}`)
             }]);
+            const { role } = await inquirer.prompt([{ name: 'role' }]);
 
-            console.log(employee);
-
+            const employeeId = employee.split(' ')[0];
+            await updateEmployeeRole(employeeId, role);
             break;
 
         default:
