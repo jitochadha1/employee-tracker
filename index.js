@@ -1,5 +1,6 @@
-const { showTable, insert, getEmployees, updateEmployeeRole } = require('./db/database');
+const { showTable, insert, getEmployees, updateEmployeeRole, deleteEmployee } = require('./db/database');
 const inquirer = require('inquirer');
+const connection = require('./db/connect');
 
 const VIEW_DEPARTMENTS = 'view all departments';
 const VIEW_ROLES = 'view all roles';
@@ -8,6 +9,8 @@ const ADD_DEPARTMENT = 'add a department';
 const ADD_ROLE = 'add a role';
 const ADD_EMPLOYEE = 'add an employee';
 const UPDATE_ROLE = 'update an employee role';
+const DELETE_EMPLOYEE = 'Delete employee';
+const END = 'Finish program';
 
 const options = [{
     name: 'action',
@@ -21,6 +24,8 @@ const options = [{
         ADD_ROLE,
         ADD_EMPLOYEE,
         UPDATE_ROLE,
+        DELETE_EMPLOYEE,
+        END
     ]
 }];
 
@@ -42,8 +47,13 @@ async function run() {
 
         case ADD_DEPARTMENT:
             const { name } = await inquirer.prompt([{ name: 'name', label: 'Department name' }]);
-            insert('department', { name })
+            insert('department', { name });
             break;
+
+        // case DELETE_DEPARTMENT:
+        //const { name } = await inquirer.prompt([{ name: 'name', label: 'Department name' }]);
+        //insert('department', { name });
+        // break;
 
         case ADD_ROLE:
             const { title, salary, department_id } = await inquirer.prompt([{
@@ -84,7 +94,17 @@ async function run() {
 
             const employeeId = employee.split(' ')[0];
             await updateEmployeeRole(employeeId, role);
+            await showTable('employee');
             break;
+
+        case DELETE_EMPLOYEE:
+            const { employee_id: id } = await inquirer.prompt([{ name: 'employee_id' }]);
+            await deleteEmployee(id);
+            await showTable('employee');
+            break;
+
+        case END:
+            return connection.end();
 
         default:
             break;
