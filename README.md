@@ -36,4 +36,7 @@ Feel free to reach out with any question you have about Employee Tracker!
 - GitHub: [jitochadha1](https://www.github.com/jitochadha1)
 - Email: [jitochadha@gmail.com](mailto:jitochadha@gmail.com)
 
+walkthrough video 
+https://drive.google.com/file/d/1dl3Lctfuf_hwKm51VMpjL50sZbMB-A7M/view
+
 <img src="Screen Shot 2021-03-17 at 3.56.36 PM.png">
